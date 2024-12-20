@@ -1,17 +1,11 @@
 #include "user_peripheral_init.h"
 
 static UART_HandleTypeDef huart1;
-static TIM_HandleTypeDef htim;
 static DAC_HandleTypeDef hdac;
 
 
 static void SystemClock_Config(void);
 static void UART_Init(void);
-static void TIM1_BaseConfig(void);
-static void TIM1_PWMConfig(void);
-static void TIM6_BaseConfig(void);
-static void TIM6_TriggerOutputConfig(void);
-static void TIMs_Init(void);
 static void NVIC_Init(void);
 static void DAC_Init(void);
 
@@ -72,83 +66,6 @@ static void UART_Init(void)
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
 }
 
-/**
- * @brief Initialize basic configuration for TIM1.
- */
-static void TIM1_BaseConfig(void)
-{
-    __HAL_RCC_TIM1_CLK_ENABLE();
-
-    htim.Instance = TIM1;
-    htim.Init.Prescaler = 16799; // Clock divider: (168 MHz / (Prescaler + 1)) = 10 kHz
-    htim.Init.CounterMode = TIM_COUNTERMODE_UP; // Counter counts up
-    htim.Init.Period = 999; // Period: (10 kHz / (Period + 1)) = 5 Hz
-    htim.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1; // No additional clock division
-    htim.Init.RepetitionCounter = 0; // No repetition
-
-    if (HAL_TIM_Base_Init(&htim) != HAL_OK)
-    {
-        Error_Handler();
-    }
-}
-
-/**
- * @brief Configure PWM mode for TIM1 Channel 1.
- */
-static void TIM1_PWMConfig(void)
-{
-    TIM_OC_InitTypeDef sConfigOC = {0};
-    sConfigOC.OCMode = TIM_OCMODE_TOGGLE; // Toggle mode
-    sConfigOC.Pulse = 500; // Half of the period (50% duty cycle)
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH; // Positive polarity
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE; // Fast mode disabled
-
-    if (HAL_TIM_OC_ConfigChannel(&htim, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-    {
-        Error_Handler();
-    }
-}
-
-/**
- * @brief Initialize basic configuration for TIM6.
- */
-static void TIM6_BaseConfig(void)
-{
-    __HAL_RCC_TIM6_CLK_ENABLE();
-
-    htim.Instance = TIM6;
-    htim.Init.Prescaler = 14; // Clock: 168 MHz / (Prescaler + 1) = 12 MHz
-    htim.Init.Period = 24;    // Period: (1 MHz / (Period + 1)) = 1 kHz
-    htim.Init.CounterMode = TIM_COUNTERMODE_UP;
-
-    if (HAL_TIM_Base_Init(&htim) != HAL_OK)
-    {
-        Error_Handler();
-    }
-}
-
-/**
- * @brief Configure TIM6 as trigger output for DAC.
- */
-static void TIM6_TriggerOutputConfig(void)
-{
-    TIM_MasterConfigTypeDef sMasterConfig = {0};
-    sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
-    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-
-    if (HAL_TIMEx_MasterConfigSynchronization(&htim, &sMasterConfig) != HAL_OK)
-    {
-        Error_Handler();
-    }
-}
-
-static void TIMs_Init(void)
-{
-    TIM1_BaseConfig();
-    TIM1_PWMConfig();
-    TIM6_BaseConfig();
-    TIM6_TriggerOutputConfig();
-}
 
 static void NVIC_Init(void)
 {

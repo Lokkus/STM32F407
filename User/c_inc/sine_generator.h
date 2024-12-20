@@ -13,10 +13,6 @@ extern "C" {
 //#define SIN_FREQ 10          // Częstotliwość wyjściowej fali (Hz)
 
 void start_sinwave(void);
-// void DAC_Init(void);
-// void TIM6_Init(void);
-// void DMA_Init(void);
-void sine_gen_test();
 
 #ifdef __cplusplus
 }

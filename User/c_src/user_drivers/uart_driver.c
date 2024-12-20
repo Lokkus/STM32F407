@@ -4,11 +4,12 @@
 static uint8_t rx_buffer[RX_BUFFER_SIZE];
 
 /* Dynamic buffer to store incoming UART data */
-static DynamicBuffer dynamic_buffer = {NULL, 0, true};
+static DynamicBuffer dynamic_buffer = {NULL, 0};
 
 /* Function Prototypes */
 static void add_to_dynamic_buffer(uint8_t *data, size_t length);
 static void free_dynamic_buffer(void) __attribute__((unused));
+void UART_IDLECallback(UART_HandleTypeDef *huart); 
 
 /**
  * @brief Add data to the dynamic buffer.
@@ -50,23 +51,6 @@ static void free_dynamic_buffer(void)
 }
 
 /**
- * @brief Start UART reception in circular DMA mode.
- *
- * This function initializes the UART peripheral to start receiving data
- * in DMA mode, using a circular buffer.
- *
- * @param huart Pointer to the UART handle structure.
- */
-void start_uart_dma(UART_HandleTypeDef *huart)
-{
-    // Start reception in circular DMA mode
-    if (HAL_UART_Receive_DMA(huart, rx_buffer, RX_BUFFER_SIZE) != HAL_OK)
-    {
-        Error_Handler();
-    }
-}
-
-/**
  * @brief UART IDLE line detection callback.
  *
  * This function is called when the UART peripheral detects an IDLE line,
@@ -94,12 +78,6 @@ void UART_IDLECallback(UART_HandleTypeDef *huart)
 
         // Restart DMA reception from the beginning
         HAL_UART_Receive_DMA(huart, rx_buffer, RX_BUFFER_SIZE);
-
-        // Here you can process the data in the dynamic buffer, e.g., print:
-        // printf("Received: %.*s\r\n", (int)dynamic_buffer.size, dynamic_buffer.data);
-
-        // After processing, optionally free the dynamic buffer:
-        // free_dynamic_buffer();
     }
 }
 
@@ -117,6 +95,30 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         add_to_dynamic_buffer(rx_buffer, RX_BUFFER_SIZE);
         // Clear the receive buffer
         memset(rx_buffer, 0, RX_BUFFER_SIZE);
+    }
+}
+
+/**
+ * @brief Start UART reception in circular DMA mode.
+ *
+ * This function initializes the UART peripheral to start receiving data
+ * in DMA mode, using a circular buffer.
+ */
+void enable_getting_uart_data_dma()
+{
+    // Start reception in circular DMA mode
+    if (HAL_UART_Receive_DMA(UART_GetHandle(), rx_buffer, RX_BUFFER_SIZE) != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+
+void send_uart_data_dma(uint8_t* data)
+{
+    uint16_t len = (uint16_t)strlen((const char*)data);
+    if (HAL_UART_Transmit_DMA(UART_GetHandle(), data, len))
+    {
+        Error_Handler();
     }
 }
 

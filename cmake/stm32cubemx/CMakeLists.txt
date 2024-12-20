@@ -19,6 +19,7 @@ target_include_directories(stm32cubemx INTERFACE
     ../../Drivers/CMSIS/Include
     ../../User/c_inc
     ../../User/c_inc/hardware_init
+    ../../User/c_inc/user_drivers
     ../../User/Tests/inc
 )
 
@@ -51,9 +52,12 @@ target_sources(stm32cubemx INTERFACE
     ../../User/c_src/hardware_init/user_peripheral_init.c
     ../../User/c_src/hardware_init/user_dma_init.c
     ../../User/c_src/hardware_init/user_gpio_init.c
+    ../../User/c_src/hardware_init/user_timer_init.c
     ../../User/c_src/sine_generator.c
-    ../../User/c_src/uart_driver.c
+    ../../User/c_src/user_drivers/uart_driver.c
+    ../../User/c_src/user_drivers/timer_driver.c
     ../../User/Tests/src/uart_test.c
+    ../../User/Tests/src/timer_test.c
 )
 
 target_link_directories(stm32cubemx INTERFACE

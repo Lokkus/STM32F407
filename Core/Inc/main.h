@@ -29,11 +29,14 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 #include "uart_test.h"
+#include "timer_test.h"
 #include "uart_driver.h"
 #include "sine_generator.h"
 #include "user_peripheral_init.h"
 #include "user_dma_init.h"
 #include "user_gpio_init.h"
+#include "user_timer_init.h"
+#include "timer_driver.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,6 +44,9 @@ extern "C" {
 
 #ifdef __cplusplus
 }
+
+void tests();
+
 #endif
 
 #endif /* __MAIN_H */

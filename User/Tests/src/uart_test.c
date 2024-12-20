@@ -1,7 +1,6 @@
 #include "uart_test.h"
 
 static void test_printf() __attribute__((unused));
-static void get_uart_using_dma() __attribute__((unused));
 
 static void test_printf()
 {
@@ -14,14 +13,8 @@ static void test_printf()
     }
 }
 
-static void get_uart_using_dma()
-{
-    start_uart_dma(UART_GetHandle());
-}
-
-
 void uart_tests()
 {
     test_printf();
-    //get_uart_using_dma();
+    enable_getting_uart_data_dma();
 }

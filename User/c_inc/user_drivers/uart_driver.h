@@ -13,10 +13,10 @@ typedef struct
 {
     uint8_t* data;
     size_t size;
-    bool rx_buffer1_flag;
 }DynamicBuffer;
 
-void start_uart_dma(UART_HandleTypeDef *huart);
+void enable_getting_uart_data_dma();
+void send_uart_data_dma(uint8_t* data);
 void UART_IDLECallback(UART_HandleTypeDef *huart);
 DynamicBuffer* get_dynamic_buffer();
 
